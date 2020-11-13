@@ -23,7 +23,8 @@ namespace gk
 
     void Renderer::Shutdown()
     {
-        
+        SDL_GL_DeleteContext(m_context);
+        SDL_DestroyWindow(m_window);
     }
 
     bool Renderer::Create(const std::string& name, int w, int h)
@@ -33,6 +34,11 @@ namespace gk
         {
             SDL_Log("Failed to create window: %s", SDL_GetError());
         }
+
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+        //SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
         SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
         SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
