@@ -31,6 +31,9 @@
     <Filter Include="Resources\Shaders">
       <UniqueIdentifier>{75eb2448-ae68-4d29-bd1d-2edb670af3d9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Engine\Math">
+      <UniqueIdentifier>{9cac2500-3636-4627-8264-d5854ceaebc3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -65,6 +68,9 @@
     </ClCompile>
     <ClCompile Include="Engine\Core\File.cpp">
       <Filter>Source\Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Graphics\Program.cpp">
+      <Filter>Source\Engine\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -106,6 +112,12 @@
     </ClInclude>
     <ClInclude Include="Engine\Core\File.h">
       <Filter>Source\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Math\Math.h">
+      <Filter>Source\Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\Program.h">
+      <Filter>Source\Engine\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

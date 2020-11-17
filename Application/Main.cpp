@@ -1,7 +1,7 @@
 
 #include "pch.h"
-#include <glad\glad.h>
 #include "Engine/Graphics/Renderer.h"
+#include "Engine/Graphics/Program.h"
 
 int main(int argc, char** argv)
 {
@@ -17,11 +17,11 @@ int main(int argc, char** argv)
 		 0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
 	};
 
-	std::string vertexShaderSource;
-	gk::ReadFileToString("Shaders\\basic.vert", vertexShaderSource);
-
-	std::string fragmentShaderSource;
-	gk::ReadFileToString("Shaders\\basic.frag", fragmentShaderSource);
+	gk::Program program;
+	program.CreateShaderFromFile("shaders\\basic.vert", GL_VERTEX_SHADER);
+	program.CreateShaderFromFile("shaders\\basic.frag", GL_FRAGMENT_SHADER);
+	program.Link();
+	program.Use();
 
 	// Create Vertex Buffers
 	GLuint vbo;
@@ -36,26 +36,6 @@ int main(int argc, char** argv)
 	// Set Color Pipeline (Vertex Attribute)
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
-
-	// Create Vertex Shader
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	const char* str = vertexShaderSource.c_str();
-	glShaderSource(vertexShader, 1, &str, nullptr);
-	glCompileShader(vertexShader);
-
-	// Create Fragment Shader
-	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	str = fragmentShaderSource.c_str();
-	glShaderSource(fragmentShader, 1, &str, nullptr);
-	glCompileShader(fragmentShader);
-
-	//Create Program
-	GLuint program = glCreateProgram();
-	glAttachShader(program, vertexShader);
-	glAttachShader(program, fragmentShader);
-	glLinkProgram(program);
-
-	glUseProgram(program);
 
 	bool quit = false;
 	while (!quit)

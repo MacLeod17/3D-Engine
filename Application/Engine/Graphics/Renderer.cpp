@@ -11,7 +11,7 @@ namespace gk
         {
             SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
         }
-        //IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
+        IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
 
         return true;
     }
