@@ -1,6 +1,7 @@
 
 #include "pch.h"
 #include "Engine/Graphics/Renderer.h"
+#include "Engine/Graphics/Texture.h"
 #include "Engine/Graphics/Program.h"
 
 int main(int argc, char** argv)
@@ -12,9 +13,9 @@ int main(int argc, char** argv)
 	// Initialization
 	float vertices[] =
 	{
-		-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-		 0.0f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-		 0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
+		-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		 0.0f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.5f, 1.0f,
+		 0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
 	};
 
 	gk::Program program;
@@ -30,12 +31,23 @@ int main(int argc, char** argv)
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 	// Set Position Pipeline (Vertex Attribute)
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 0);
 	glEnableVertexAttribArray(0);
 
 	// Set Color Pipeline (Vertex Attribute)
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
+
+	// Set UV Pipeline (Vertex Attribute)
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+
+	// Uniform
+	glm::mat4 transform = glm::mat4(1.0f);
+	program.SetUniform("transform", transform);
+
+	gk::Texture texture;
+	texture.CreateTexture("Textures\\llama.jpg");
 
 	bool quit = false;
 	while (!quit)
@@ -56,6 +68,9 @@ int main(int argc, char** argv)
 		}
 
 		SDL_PumpEvents();
+
+		transform = glm::rotate(transform, 0.001f, glm::vec3{ 0, 0, 1 });
+		program.SetUniform("transform", transform);
 
 		renderer.BeginFrame();
 
