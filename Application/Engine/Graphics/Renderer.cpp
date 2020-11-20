@@ -50,6 +50,10 @@ namespace gk
             SDL_Log("Failed to create OpenGL context");
             exit(-1);
         }
+
+        glViewport(0, 0, w, h);
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
         
         return true;
     }
@@ -57,7 +61,7 @@ namespace gk
     void Renderer::BeginFrame()
     {
         glClearColor(0, 0, 0, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
     void Renderer::EndFrame()
