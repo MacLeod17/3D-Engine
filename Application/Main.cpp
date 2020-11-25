@@ -1,22 +1,11 @@
 
 #include "pch.h"
-#include "Engine/Graphics/Renderer.h"
-#include "Engine/Graphics/Texture.h"
-#include "Engine/Graphics/Program.h"
+#include "Engine/Engine.h"
 
 int main(int argc, char** argv)
 {
-	gk::Renderer renderer;
-	renderer.Startup();
-	renderer.Create("OpenGL", 800, 600);
-
-	// Initialization
-	//float vertices[] =
-	//{
-	//	-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-	//	 0.0f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.5f, 1.0f,
-	//	 0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
-	//};
+	gk::Engine engine;
+	engine.Startup();
 
 	static float vertices[] = {
 		// front
@@ -61,31 +50,39 @@ int main(int argc, char** argv)
 	program.Use();
 
 	// Create Vertex Buffers
-	GLuint vbo;
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	//GLuint vbo;
+	//glGenBuffers(1, &vbo);
+	//glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	gk::VertexIndexArray vertexArray;
+	vertexArray.Create("vertex");
+	vertexArray.CreateBuffer(sizeof(vertices), sizeof(vertices) / (sizeof(float) * 5), vertices);
+	vertexArray.SetAttribute(0, 3, 5 * sizeof(float), 0);
+	vertexArray.SetAttribute(1, 2, 5 * sizeof(float), (3 * sizeof(float)));
+
 
 	// Set Position Pipeline (Vertex Attribute)
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
-	glEnableVertexAttribArray(0);
+	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
+	//glEnableVertexAttribArray(0);
 
 	// Set UV Pipeline (Vertex Attribute)
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
+	//glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	//glEnableVertexAttribArray(1);
 
 	// Create Index Buffers
-	GLuint ibo;
-	glGenBuffers(1, &ibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	//GLuint ibo;
+	//glGenBuffers(1, &ibo);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	vertexArray.CreateIndexBuffer(GL_UNSIGNED_SHORT, sizeof(indices) / sizeof(GLushort), indices);
 
 	// Uniform
-	glm::mat4 transform = glm::mat4(1.0f);
-	program.SetUniform("transform", transform);
+	glm::mat4 model = glm::mat4(1.0f);
 
 	glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800 / (float)600, 0.01f, 1000.0f);
-	glm::mat4 view = glm::lookAt(glm::vec3{ 0, 2, -5 }, glm::vec3{ 0, 0, 0 }, glm::vec3{ 0, 1, 0 });
+
+	glm::vec3 eye{ 0, 0, 5 };
+	glm::mat4 view = glm::lookAt(eye, glm::vec3{ 0, 0, 0 }, glm::vec3{ 0, 1, 0 });
 
 	gk::Texture texture;
 	texture.CreateTexture("Textures\\llama.jpg");
@@ -109,21 +106,51 @@ int main(int argc, char** argv)
 		}
 
 		SDL_PumpEvents();
+		engine.Update();
 
-		transform = glm::rotate(transform, 0.001f, glm::vec3{ 0, 1, 0 });
+		float angle = 0;
+		if (engine.GetSystem<gk::InputSystem>()->GetButtonState(SDL_SCANCODE_E) == gk::InputSystem::eButtonState::HELD)
+		{
+			angle = 2.0f;
+		}
+		if (engine.GetSystem<gk::InputSystem>()->GetButtonState(SDL_SCANCODE_Q) == gk::InputSystem::eButtonState::HELD)
+		{
+			angle = -2.0f;
+		}
+		model = glm::rotate(model, angle * engine.GetTimer().DeltaTime(), glm::vec3{ 0, 1, 0 });
 
-		glm::mat4 mvp = projection * view * transform;
+		if (engine.GetSystem<gk::InputSystem>()->GetButtonState(SDL_SCANCODE_A) == gk::InputSystem::eButtonState::HELD)
+		{
+			eye.x -= 4 * engine.GetTimer().DeltaTime();
+		}
+		if (engine.GetSystem<gk::InputSystem>()->GetButtonState(SDL_SCANCODE_D) == gk::InputSystem::eButtonState::HELD)
+		{
+			eye.x += 4 * engine.GetTimer().DeltaTime();
+		}
+		if (engine.GetSystem<gk::InputSystem>()->GetButtonState(SDL_SCANCODE_W) == gk::InputSystem::eButtonState::HELD)
+		{
+			eye.z -= 4 * engine.GetTimer().DeltaTime();
+		}
+		if (engine.GetSystem<gk::InputSystem>()->GetButtonState(SDL_SCANCODE_S) == gk::InputSystem::eButtonState::HELD)
+		{
+			eye.z += 4 * engine.GetTimer().DeltaTime();
+		}
+		view = glm::lookAt(eye, eye + glm::vec3{ 0, 0, -1 }, glm::vec3{ 0, 1, 0 });
+
+		glm::mat4 mvp = projection * view * model;
 		program.SetUniform("transform", mvp);
 
-		renderer.BeginFrame();
+		engine.GetSystem<gk::Renderer>()->BeginFrame();
 
 		// Render Triangle
-		//glDrawArrays(GL_TRIANGLES, 0, 3);
-		GLsizei numElements = sizeof(indices) / sizeof(GLushort);
-		glDrawElements(GL_TRIANGLES, numElements, GL_UNSIGNED_SHORT, 0);
+		//GLsizei numElements = sizeof(indices) / sizeof(GLushort);
+		//glDrawElements(GL_TRIANGLES, numElements, GL_UNSIGNED_SHORT, 0);
+		vertexArray.Draw();
 
-		renderer.EndFrame();
+		engine.GetSystem<gk::Renderer>()->EndFrame();
 	}
+
+	engine.Shutdown();
 
 	return 0;
 }
