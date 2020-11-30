@@ -16,7 +16,7 @@ namespace gk
 		VertexArray::Destroy();
 
 		// delete the index buffer m_ibo with glDeleteBuffers
-		glDeleteBuffers(m_indexCount, &m_ibo);
+		glDeleteBuffers(1, &m_ibo);
 	}
 
 	void VertexIndexArray::CreateIndexBuffer(GLenum indexType, GLsizei count, void* data)

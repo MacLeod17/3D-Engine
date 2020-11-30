@@ -31,7 +31,7 @@ namespace gk
 
 		GLuint vbo = 0;
 		// generate vertex buffer vbo with glGenBuffers
-		glGenBuffers(m_vao, &vbo);
+		glGenBuffers(1, &vbo);
 
 		// bind vertex buffer glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
