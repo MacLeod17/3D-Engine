@@ -9,6 +9,8 @@ struct Material
 {
 	vec3 ambient;
 	vec3 diffuse;
+	vec3 specular;
+	float shininess;
 };
 
 struct Light
@@ -16,6 +18,7 @@ struct Light
 	vec4 position;
 	vec3 ambient;
 	vec3 diffuse;
+	vec3 specular;
 };
 
 uniform Material material;
@@ -31,14 +34,24 @@ void main()
 	vec3 ambient = material.ambient * light.ambient;
 
 	//Diffuse
-	vec3 normal = mat3(model_view) * vs_normal;
+	vec3 normal = normalize(mat3(model_view) * vs_normal);
 	vec4 position = model_view * vec4(vs_position, 1);
 	vec3 direction_to_light = normalize(vec3(light.position - position));
 
-	//Intensity
 	float lDotN = max(dot(direction_to_light, normal), 0);
 	vec3 diffuse = material.diffuse * light.diffuse * lDotN;
 
-	fs_color = ambient + diffuse;
+	//Specular
+	vec3 specular = vec3(0);
+	if (lDotN > 0)
+	{
+		vec3 direction_to_view = normalize(-position.xyz);
+		vec3 reflection = reflect(-direction_to_light, normal);
+		float intensity = max(dot(direction_to_view, reflection), 0);
+		intensity = pow(intensity, material.shininess);
+		specular = material.specular * light.specular * intensity;
+	}
+
+	fs_color = ambient + diffuse + specular;
 	gl_Position = mvp * vec4(vs_position, 1.0);
 }

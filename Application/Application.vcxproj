@@ -170,6 +170,7 @@
     <ClCompile Include="Engine\Core\File.cpp" />
     <ClCompile Include="Engine\Core\Timer.cpp" />
     <ClCompile Include="Engine\Engine.cpp" />
+    <ClCompile Include="Engine\Graphics\Model.cpp" />
     <ClCompile Include="Engine\Graphics\Program.cpp" />
     <ClCompile Include="Engine\Graphics\Renderer.cpp" />
     <ClCompile Include="Engine\Graphics\Texture.cpp" />
@@ -194,6 +195,7 @@
     <ClInclude Include="Engine\Core\System.h" />
     <ClInclude Include="Engine\Core\Timer.h" />
     <ClInclude Include="Engine\Engine.h" />
+    <ClInclude Include="Engine\Graphics\Model.h" />
     <ClInclude Include="Engine\Graphics\Program.h" />
     <ClInclude Include="Engine\Graphics\Renderer.h" />
     <ClInclude Include="Engine\Graphics\Texture.h" />
@@ -210,6 +212,13 @@
     <None Include="..\Build\Shaders\basic.vert" />
     <None Include="..\Build\Shaders\gouraud.frag" />
     <None Include="..\Build\Shaders\gouraud.vert" />
+    <None Include="..\Build\Shaders\phong.frag" />
+    <None Include="..\Build\Shaders\phong.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Build\Textures\llama.jpg" />
+    <Image Include="..\Build\Textures\rock.png" />
+    <Image Include="..\Build\Textures\wall.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

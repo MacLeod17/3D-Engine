@@ -8,6 +8,7 @@
 
 #include "Engine/Math/Math.h"
 
+#include "Graphics/Model.h"
 #include "Graphics/Renderer.h"
 #include "Graphics/Program.h"
 #include "Graphics/Texture.h"

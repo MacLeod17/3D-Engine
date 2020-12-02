@@ -84,6 +84,9 @@
     <ClCompile Include="Engine\Graphics\VertexIndexArray.cpp">
       <Filter>Source\Engine\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Graphics\Model.cpp">
+      <Filter>Source\Engine\Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Core\Assert.h">
@@ -140,6 +143,9 @@
     <ClInclude Include="Engine\Graphics\VertexIndexArray.h">
       <Filter>Source\Engine\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Graphics\Model.h">
+      <Filter>Source\Engine\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Build\Shaders\basic.vert">
@@ -154,5 +160,22 @@
     <None Include="..\Build\Shaders\gouraud.vert">
       <Filter>Resources\Shaders</Filter>
     </None>
+    <None Include="..\Build\Shaders\phong.frag">
+      <Filter>Resources\Shaders</Filter>
+    </None>
+    <None Include="..\Build\Shaders\phong.vert">
+      <Filter>Resources\Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Build\Textures\llama.jpg">
+      <Filter>Resources\Textures</Filter>
+    </Image>
+    <Image Include="..\Build\Textures\rock.png">
+      <Filter>Resources\Textures</Filter>
+    </Image>
+    <Image Include="..\Build\Textures\wall.png">
+      <Filter>Resources\Textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>
