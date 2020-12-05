@@ -87,6 +87,9 @@
     <ClCompile Include="Engine\Graphics\Model.cpp">
       <Filter>Source\Engine\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Math\Transform.cpp">
+      <Filter>Source\Engine\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Core\Assert.h">
@@ -146,6 +149,9 @@
     <ClInclude Include="Engine\Graphics\Model.h">
       <Filter>Source\Engine\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Math\Transform.h">
+      <Filter>Source\Engine\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Build\Shaders\basic.vert">
@@ -175,6 +181,12 @@
       <Filter>Resources\Textures</Filter>
     </Image>
     <Image Include="..\Build\Textures\wall.png">
+      <Filter>Resources\Textures</Filter>
+    </Image>
+    <Image Include="..\Build\Textures\ogre_diffuse.bmp">
+      <Filter>Resources\Textures</Filter>
+    </Image>
+    <Image Include="..\Build\Textures\ogre_diffuse_flip.bmp">
       <Filter>Resources\Textures</Filter>
     </Image>
   </ItemGroup>
