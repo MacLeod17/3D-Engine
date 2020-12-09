@@ -7,9 +7,11 @@ int main(int argc, char** argv)
 	gk::Engine engine;
 	engine.Startup();
 
+	gk::Scene scene{ &engine };
+
 	gk::Program program;
-	program.CreateShaderFromFile("shaders\\phong.vert", GL_VERTEX_SHADER);
-	program.CreateShaderFromFile("shaders\\phong.frag", GL_FRAGMENT_SHADER);
+	program.CreateShaderFromFile("shaders/phong.vert", GL_VERTEX_SHADER);
+	program.CreateShaderFromFile("shaders/phong.frag", GL_FRAGMENT_SHADER);
 	program.Link();
 	program.Use();
 
@@ -19,7 +21,7 @@ int main(int argc, char** argv)
 	std::vector<glm::vec3> positions;
 	std::vector<glm::vec3> normals;
 	std::vector<glm::vec2> texcoords;
-	gk::Model::Load("models/ogre.obj", positions, normals, texcoords);
+	gk::Model::Load("models/sphere.obj", positions, normals, texcoords);
 
 	if (!positions.empty())
 	{
@@ -39,23 +41,28 @@ int main(int argc, char** argv)
 
 	// Uniform
 	glm::mat4 model = glm::mat4(1.0f);
-	glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800 / (float)600, 0.01f, 1000.0f);
+
+	// Camera
 	glm::vec3 eye{ 0, 0, 5 };
-	glm::mat4 view = glm::lookAt(eye, glm::vec3{ 0, 0, 0 }, glm::vec3{ 0, 1, 0 });
+
+	gk::Camera camera{ "camera" };
+	scene.Add(&camera);
+	camera.SetProjection(45.0f, 800.0f / 600.0f, 0.01f, 1000.0f);
+	camera.SetLookAt(eye, glm::vec3{ 0, 0, 0 }, glm::vec3{ 0, 1, 0 });
 
 	gk::Texture texture;
-	texture.CreateTexture("Textures\\ogre_diffuse_flip.bmp");
+	texture.CreateTexture("Textures/ogre_diffuse_flip.bmp");
 
-	program.SetUniform("material.ambient", glm::vec3{ 1, 1, 1 });
-	program.SetUniform("material.diffuse", glm::vec3{ 1, 1, 1 });
-	program.SetUniform("material.specular", glm::vec3{ 1, 1, 1 });
-	program.SetUniform("material.shininess", 32.0f);
+	gk::Material material{ glm::vec3{ 1 }, glm::vec3{ 1 }, glm::vec3{ 1 }, 32.0f };
+	material.AddTexture(texture);
+	material.SetProgram(program);
 
-	program.SetUniform("light.ambient", glm::vec3{ 0.1f, 0.1f, 0.1f });
-	program.SetUniform("light.diffuse", glm::vec3{ 1, 1, 1 });
-	program.SetUniform("light.specular", glm::vec3{ 1, 1, 1 });
-
-	glm::vec4 light{ 5, 2, 5, 1 };
+	gk::Light light{ "light", 
+		gk::Transform{ glm::vec3{5, 2, 5} }, 
+		glm::vec3{ 0.1f }, 
+		glm::vec3{ 1 },
+		glm::vec3{ 1 } };
+	scene.Add(&light);
 
 	bool quit = false;
 	while (!quit)
@@ -78,6 +85,8 @@ int main(int argc, char** argv)
 		SDL_PumpEvents();
 		engine.Update();
 
+		scene.Update(engine.GetTimer().DeltaTime());
+
 		float angle = 0;
 		if (engine.GetSystem<gk::InputSystem>()->GetButtonState(SDL_SCANCODE_E) == gk::InputSystem::eButtonState::HELD)
 		{
@@ -89,37 +98,25 @@ int main(int argc, char** argv)
 		}
 		model = glm::rotate(model, angle * engine.GetTimer().DeltaTime(), glm::vec3{ 0, 1, 0 });
 
-		if (engine.GetSystem<gk::InputSystem>()->GetButtonState(SDL_SCANCODE_A) == gk::InputSystem::eButtonState::HELD)
-		{
-			eye.x -= 4 * engine.GetTimer().DeltaTime();
-		}
-		if (engine.GetSystem<gk::InputSystem>()->GetButtonState(SDL_SCANCODE_D) == gk::InputSystem::eButtonState::HELD)
-		{
-			eye.x += 4 * engine.GetTimer().DeltaTime();
-		}
-		if (engine.GetSystem<gk::InputSystem>()->GetButtonState(SDL_SCANCODE_W) == gk::InputSystem::eButtonState::HELD)
-		{
-			eye.z -= 4 * engine.GetTimer().DeltaTime();
-		}
-		if (engine.GetSystem<gk::InputSystem>()->GetButtonState(SDL_SCANCODE_S) == gk::InputSystem::eButtonState::HELD)
-		{
-			eye.z += 4 * engine.GetTimer().DeltaTime();
-		}
-		view = glm::lookAt(eye, eye + glm::vec3{ 0, 0, -1 }, glm::vec3{ 0, 1, 0 });
-
-		glm::mat4 mvp = projection * view * model;
+		glm::mat4 mvp = camera.projection() * camera.view() * model;
 		program.SetUniform("mvp", mvp);
 
-		glm::mat4 model_view = view * model;
+		glm::mat4 model_view = camera.view() * model;
 		program.SetUniform("model_view", model_view);
 
-		glm::vec4 position = view * light;
-		program.SetUniform("light.position", position);
+		std::vector<gk::Light*> lights = scene.Get<gk::Light>();
+		if (!lights.empty())
+		{
+			for (auto light : lights)
+			{
+				light->SetProgram(program);
+			}
+		}
 
 		engine.GetSystem<gk::Renderer>()->BeginFrame();
 
-		// Render Triangle
 		vertexArray.Draw();
+		scene.Draw();
 
 		engine.GetSystem<gk::Renderer>()->EndFrame();
 	}
